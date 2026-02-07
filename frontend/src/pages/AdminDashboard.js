@@ -1066,7 +1066,7 @@ const CourseManagement = () => {
                       variant="outline"
                       onClick={() => openEdit(course)}
                     >
-                      Edit
+                      <Edit/>
                     </Button>
 
                     <Button
@@ -1074,7 +1074,7 @@ const CourseManagement = () => {
                       variant="destructive"
                       onClick={() => deleteCourse(course._id)}
                     >
-                      Delete
+                      <Trash2/>
                     </Button>
                   </TableCell>
 

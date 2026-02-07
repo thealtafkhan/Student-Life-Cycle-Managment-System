@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
@@ -25,6 +24,7 @@ import {
 } from "../components/ui/table";
 import { toast } from "sonner";
 import api from "../utils/api";
+import { Edit, Trash2 } from "lucide-react";
 
 export const FacultyManagement = () => {
   const [faculties, setFaculties] = useState([]);
@@ -81,10 +81,18 @@ export const FacultyManagement = () => {
   /* ---------------- CREATE ---------------- */
 
   const createFaculty = async () => {
+    if (!formData.departmentId) {
+      toast.error("Please select a department");
+      return;
+    }
+
     const res = await api.post("/api/faculty", formData);
 
-    if (selectedSubjects.length) {
-      await api.post(`/api/faculty/${res.data.faculty._id}/assign-subjects`, {
+    const facultyId = res.data?.faculty?._id;
+    if (!facultyId) throw new Error("Faculty ID missing");
+
+    if (selectedSubjects.length > 0) {
+      await api.post(`/api/faculty/${facultyId}/assign-subjects`, {
         subjectIds: selectedSubjects,
       });
     }
@@ -122,13 +130,16 @@ export const FacultyManagement = () => {
   };
 
   /* ---------------- SUBMIT ---------------- */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       isEditing ? await updateFaculty() : await createFaculty();
-      toast.success(isEditing ? "Faculty updated" : "Faculty created");
+
+      await fetchFaculties();
       resetForm();
-      fetchFaculties();
+
+      toast.success(isEditing ? "Faculty updated" : "Faculty created");
     } catch (err) {
       console.log(err);
       toast.error(
@@ -197,8 +208,21 @@ export const FacultyManagement = () => {
         <h1 className="text-4xl font-bold text-brand-blue">
           Faculty Management
         </h1>
-        <Button className="bg-brand-blue" onClick={() => resetForm()}>
-          Add Faculty
+        <Button
+          className="bg-brand-blue"
+          onClick={() => {
+            if (showForm) {
+              // Cancel clicked
+              resetForm();
+            } else {
+              // Add Faculty clicked
+              resetForm();
+              setShowForm(true);
+              setIsEditing(false);  
+            }
+          }}
+        >
+          {showForm ? "Cancel" : "Add Faculty"}
         </Button>
       </div>
 
@@ -279,6 +303,10 @@ export const FacultyManagement = () => {
                 </Select>
               </div>
 
+              {!formData.departmentId && (
+                <p className="text-xs text-red-500">Department is required</p>
+              )}
+
               <div className="border p-3 max-h-56 overflow-y-auto">
                 {subjects.map((s) => (
                   <label key={s._id} className="flex gap-2 text-sm">
@@ -328,24 +356,14 @@ export const FacultyManagement = () => {
                       variant="outline"
                       onClick={() => handleEdit(f)}
                     >
-                      Edit
+                      <Edit />
                     </Button>
-                    {/* <Button
+                    <Button
                       size="sm"
                       variant="destructive"
                       onClick={() => deleteFaculty(f._id)}
                     >
-                      Delete
-                    </Button> */}
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => {
-                        console.log("DELETE CLICKED", f._id);
-                        deleteFaculty(f._id);
-                      }}
-                    >
-                      Delete
+                      <Trash2 />
                     </Button>
                   </TableCell>
                 </TableRow>
