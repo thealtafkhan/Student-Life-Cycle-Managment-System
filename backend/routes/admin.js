@@ -1,5 +1,6 @@
 import express from 'express';
 import { auth, roleAuth } from '../middleware/auth.js';
+
 import User from '../models/User.js';
 import Application from '../models/Application.js';
 import Enrollment from '../models/Enrollment.js';
@@ -10,42 +11,69 @@ import Faculty from '../models/Faculty.js';
 
 const router = express.Router();
 
-// Get dashboard statistics (Admin)
+/* =====================================================
+   ADMIN DASHBOARD STATS (FIXED & ACCURATE)
+   ===================================================== */
 router.get('/dashboard-stats', auth, roleAuth('admin'), async (req, res) => {
   try {
-    // Applications
+    /* ---------------- APPLICATIONS ---------------- */
     const totalApplications = await Application.countDocuments();
     const pendingApplications = await Application.countDocuments({ status: 'pending' });
     const selectedApplications = await Application.countDocuments({ status: 'selected' });
 
-    // Students
+    /* ---------------- STUDENTS ---------------- */
     const totalStudents = await User.countDocuments({ role: 'student' });
-    const activeEnrollments = await Enrollment.countDocuments({ status: 'active' });
 
-    // Courses
-    const totalCourses = await Course.countDocuments({ isActive: true });
+    /* ---------------- COURSES & SEATS (FIXED LOGIC) ---------------- */
     const courses = await Course.find({ isActive: true });
-    const totalSeats = courses.reduce((sum, c) => sum + c.totalSeats, 0);
-    const availableSeats = courses.reduce((sum, c) => sum + c.availableSeats, 0);
 
-    // Fees
-    const totalFees = await Fee.aggregate([
-      { $group: { _id: null, total: { $sum: '$amount' } } }
-    ]);
-    const paidFees = await Fee.aggregate([
-      { $group: { _id: null, total: { $sum: '$paidAmount' } } }
-    ]);
-    const pendingFees = await Fee.countDocuments({ status: 'pending' });
+    const totalSeats = courses.reduce(
+      (sum, course) => sum + (course.totalSeats || 0),
+      0
+    );
 
-    // Hostels
-    const totalHostels = await Hostel.countDocuments({ isActive: true });
+    // Count ONLY active enrollments as filled seats
+    const filledSeats = await Enrollment.countDocuments({
+      status: 'active' // ⚠️ must match your schema
+    });
+
+    const availableSeats = Math.max(totalSeats - filledSeats, 0);
+
+    /* ---------------- FEES ---------------- */
+    const feeAgg = await Fee.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' },
+          totalPaid: { $sum: '$paidAmount' }
+        }
+      }
+    ]);
+
+    const totalFees = feeAgg[0]?.totalAmount || 0;
+    const paidFees = feeAgg[0]?.totalPaid || 0;
+    const pendingFees = totalFees - paidFees;
+
+    /* ---------------- HOSTELS ---------------- */
     const hostels = await Hostel.find({ isActive: true });
-    const hostelOccupancy = hostels.reduce((sum, h) => sum + (h.totalRooms - h.availableRooms), 0);
-    const hostelCapacity = hostels.reduce((sum, h) => sum + h.totalRooms, 0);
 
-    // Faculty
+    const hostelCapacity = hostels.reduce(
+      (sum, h) => sum + (h.totalRooms || 0),
+      0
+    );
+
+    const hostelOccupied = hostels.reduce(
+      (sum, h) =>
+        sum + ((h.totalRooms || 0) - (h.availableRooms || 0)),
+      0
+    );
+
+    const hostelAvailable = Math.max(hostelCapacity - hostelOccupied, 0);
+
+    /* ---------------- FACULTY ---------------- */
     const totalFaculty = await Faculty.countDocuments({ isActive: true });
 
+    /* ---------------- RESPONSE ---------------- */
     res.json({
       applications: {
         total: totalApplications,
@@ -53,43 +81,48 @@ router.get('/dashboard-stats', auth, roleAuth('admin'), async (req, res) => {
         selected: selectedApplications
       },
       students: {
-        total: totalStudents,
-        active: activeEnrollments
+        total: totalStudents
       },
       courses: {
-        total: totalCourses,
+        total: courses.length,
         totalSeats,
-        availableSeats,
-        filledSeats: totalSeats - availableSeats
+        filledSeats,
+        availableSeats
       },
       fees: {
-        total: totalFees[0]?.total || 0,
-        paid: paidFees[0]?.total || 0,
+        total: totalFees,
+        paid: paidFees,
         pending: pendingFees
       },
       hostels: {
-        total: totalHostels,
-        occupancy: hostelOccupancy,
+        total: hostels.length,
         capacity: hostelCapacity,
-        available: hostelCapacity - hostelOccupancy
+        occupied: hostelOccupied,
+        available: hostelAvailable
       },
       faculty: {
         total: totalFaculty
       }
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Dashboard Stats Error:', error);
+    res.status(500).json({ error: 'Failed to load dashboard statistics' });
   }
 });
 
-// Get course-wise enrollment stats
+/* =====================================================
+   COURSE-WISE ENROLLMENT STATS (FIXED)
+   ===================================================== */
 router.get('/course-stats', auth, roleAuth('admin'), async (req, res) => {
   try {
     const stats = await Enrollment.aggregate([
       {
+        $match: { status: 'active' } // only active enrollments
+      },
+      {
         $group: {
           _id: '$courseId',
-          count: { $sum: 1 }
+          studentCount: { $sum: 1 }
         }
       },
       {
@@ -103,17 +136,23 @@ router.get('/course-stats', auth, roleAuth('admin'), async (req, res) => {
       { $unwind: '$course' },
       {
         $project: {
+          _id: 0,
+          courseId: '$_id',
           courseName: '$course.name',
           courseCode: '$course.code',
-          studentCount: '$count',
-          totalSeats: '$course.totalSeats'
+          totalSeats: '$course.totalSeats',
+          filledSeats: '$studentCount',
+          availableSeats: {
+            $subtract: ['$course.totalSeats', '$studentCount']
+          }
         }
       }
     ]);
 
     res.json(stats);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Course Stats Error:', error);
+    res.status(500).json({ error: 'Failed to load course statistics' });
   }
 });
 
