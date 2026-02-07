@@ -1,14 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import { GraduationCap, Home, BookOpen, Users, Building, TrendingUp, DollarSign, FileText, UserPlus } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { toast } from 'sonner';
-import api from '../utils/api';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+
+import {
+  GraduationCap,
+  Home,
+  BookOpen,
+  Users,
+  Building,
+  TrendingUp,
+  DollarSign,
+  FileText,
+  UserPlus,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { toast } from "sonner";
+import api from "../utils/api";
 import {
   FacultyManagement,
   ApplicationManagement,
@@ -16,8 +47,15 @@ import {
   EnrollmentManagement,
   HostelManagement,
   FeeManagement,
-  ExamManagement
-} from './AdminDashboardModules';
+  ExamManagement,
+} from "./AdminDashboardModules";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 
 const AdminDashboard = ({ user, onLogout }) => {
   return (
@@ -53,40 +91,92 @@ const AdminHome = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/api/admin/dashboard-stats');
+      const response = await api.get("/api/admin/dashboard-stats");
       setStats(response.data);
+       
     } catch (error) {
-      toast.error('Failed to fetch statistics');
+      toast.error("Failed to fetch statistics");
     }
   };
 
   const fetchCourseStats = async () => {
     try {
-      const response = await api.get('/api/admin/course-stats');
+      const response = await api.get("/api/admin/course-stats");
       setCourseStats(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  if (!stats) return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue"></div></div>;
+ 
+  if (!stats)
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue"></div>
+      </div>
+    );
 
   return (
     <div>
-      <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8" data-testid="admin-dashboard">Admin Dashboard</h1>
-      
+      <h1
+        className="font-serif text-4xl font-bold text-brand-blue mb-8"
+        data-testid="admin-dashboard"
+      >
+        Admin Dashboard
+      </h1>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatsCard title="Total Applications" value={stats.applications.total} icon={<FileText />} color="blue" />
-        <StatsCard title="Pending Applications" value={stats.applications.pending} icon={<TrendingUp />} color="yellow" />
-        <StatsCard title="Total Students" value={stats.students.total} icon={<Users />} color="green" />
-        <StatsCard title="Active Enrollments" value={stats.students.active} icon={<Users />} color="purple" />
+        <StatsCard
+          title="Total Applications"
+          value={stats.applications.total}
+          icon={<FileText />}
+          color="blue"
+        />
+        <StatsCard
+          title="Pending Applications"
+          value={stats.applications.pending}
+          icon={<TrendingUp />}
+          color="yellow"
+        />
+        <StatsCard
+          title="Total Students"
+          value={stats.students.total}
+          icon={<Users />}
+          color="green"
+        />
+        <StatsCard
+          title="Active Enrollments"
+          value={stats.students.active}
+          icon={<Users />}
+          color="purple"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatsCard title="Total Courses" value={stats.courses.total} icon={<BookOpen />} color="blue" />
-        <StatsCard title="Total Faculty" value={stats.faculty.total} icon={<UserPlus />} color="green" />
-        <StatsCard title="Total Hostels" value={stats.hostels.total} icon={<Building />} color="purple" />
-        <StatsCard title="Pending Fees" value={stats.fees.pending} icon={<DollarSign />} color="red" />
+        <StatsCard
+          title="Total Courses"
+          value={stats.courses.total}
+          icon={<BookOpen />}
+          color="blue"
+        />
+        <StatsCard
+          title="Total Faculty"
+          value={stats.faculty.total}
+          icon={<UserPlus />}
+          color="green"
+        />
+        <StatsCard
+          title="Total Hostels"
+          value={stats.hostels.total}
+          icon={<Building />}
+          color="purple"
+        />
+        <StatsCard
+          title="Pending Fees"
+          value={stats.fees.pending}
+          icon={<DollarSign />}
+          color="red"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -102,16 +192,22 @@ const AdminHome = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span>Filled Seats:</span>
-                <span className="font-bold text-green-600">{stats.courses.filledSeats}</span>
+                <span className="font-bold text-green-600">
+                  {stats.courses.filledSeats}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Available Seats:</span>
-                <span className="font-bold text-blue-600">{stats.courses.availableSeats}</span>
+                <span className="font-bold text-blue-600">
+                  {stats.courses.availableSeats}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className="bg-brand-blue h-4 rounded-full transition-all" 
-                  style={{ width: `${(stats.courses.filledSeats / stats.courses.totalSeats) * 100}%` }}
+                <div
+                  className="bg-brand-blue h-4 rounded-full transition-all"
+                  style={{
+                    width: `${(stats.courses.filledSeats / stats.courses.totalSeats) * 100}%`,
+                  }}
                 ></div>
               </div>
             </div>
@@ -130,16 +226,22 @@ const AdminHome = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span>Occupied:</span>
-                <span className="font-bold text-green-600">{stats.hostels.occupancy}</span>
+                <span className="font-bold text-green-600">
+                  {stats.hostels.occupancy}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Available:</span>
-                <span className="font-bold text-blue-600">{stats.hostels.available}</span>
+                <span className="font-bold text-blue-600">
+                  {stats.hostels.available}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className="bg-brand-gold h-4 rounded-full transition-all" 
-                  style={{ width: `${(stats.hostels.occupancy / stats.hostels.capacity) * 100}%` }}
+                <div
+                  className="bg-brand-gold h-4 rounded-full transition-all"
+                  style={{
+                    width: `${(stats.hostels.occupancy / stats.hostels.capacity) * 100}%`,
+                  }}
                 ></div>
               </div>
             </div>
@@ -165,19 +267,28 @@ const AdminHome = () => {
             <TableBody>
               {courseStats.map((stat) => (
                 <TableRow key={stat._id}>
-                  <TableCell className="font-medium">{stat.courseName}</TableCell>
+                  <TableCell className="font-medium">
+                    {stat.courseName}
+                  </TableCell>
                   <TableCell>{stat.courseCode}</TableCell>
                   <TableCell>{stat.studentCount}</TableCell>
                   <TableCell>{stat.totalSeats}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <div className="w-24 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-brand-blue h-2 rounded-full" 
-                          style={{ width: `${(stat.studentCount / stat.totalSeats) * 100}%` }}
+                        <div
+                          className="bg-brand-blue h-2 rounded-full"
+                          style={{
+                            width: `${(stat.studentCount / stat.totalSeats) * 100}%`,
+                          }}
                         ></div>
                       </div>
-                      <span className="text-xs">{Math.round((stat.studentCount / stat.totalSeats) * 100)}%</span>
+                      <span className="text-xs">
+                        {Math.round(
+                          (stat.studentCount / stat.totalSeats) * 100,
+                        )}
+                        %
+                      </span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -190,10 +301,277 @@ const AdminHome = () => {
   );
 };
 
+// const DepartmentManagement = () => {
+//   const [departments, setDepartments] = useState([]);
+//   const [showForm, setShowForm] = useState(false);
+//   const [formData, setFormData] = useState({ name: '', code: '', description: '' });
+
+//   useEffect(() => {
+//     fetchDepartments();
+//   }, []);
+
+//   const fetchDepartments = async () => {
+//     try {
+//       const response = await api.get('/api/departments/');
+//       setDepartments(response.data);
+//     } catch (error) {
+//       toast.error('Failed to fetch departments');
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       await api.post('/api/departments', formData);
+//       toast.success('Department created successfully');
+//       setShowForm(false);
+//       setFormData({ name: '', code: '', description: '' });
+//       fetchDepartments();
+//     } catch (error) {
+//       toast.error(error.response?.data?.error || 'Failed to create department');
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex justify-between items-center mb-8">
+//         <h1 className="font-serif text-4xl font-bold text-brand-blue">Department Management</h1>
+//         <Button onClick={() => setShowForm(!showForm)} className="bg-brand-blue" data-testid="add-department-button">
+//           {showForm ? 'Cancel' : 'Add Department'}
+//         </Button>
+//       </div>
+
+//       {showForm && (
+//         <Card className="mb-8">
+//           <CardHeader>
+//             <CardTitle>Create New Department</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <form onSubmit={handleSubmit} className="space-y-4">
+//               <div>
+//                 <Label>Department Name</Label>
+//                 <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required data-testid="dept-name-input" />
+//               </div>
+//               <div>
+//                 <Label>Department Code</Label>
+//                 <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required data-testid="dept-code-input" />
+//               </div>
+//               <div>
+//                 <Label>Description</Label>
+//                 <Input value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} data-testid="dept-desc-input" />
+//               </div>
+//               <Button type="submit" className="bg-brand-blue" data-testid="submit-dept-button">Create Department</Button>
+//             </form>
+//           </CardContent>
+//         </Card>
+//       )}
+
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>All Departments</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <Table>
+//             <TableHeader>
+//               <TableRow>
+//                 <TableHead>Name</TableHead>
+//                 <TableHead>Code</TableHead>
+//                 <TableHead>Description</TableHead>
+//                 <TableHead>Status</TableHead>
+//               </TableRow>
+//             </TableHeader>
+//             <TableBody>
+//               {departments.map((dept) => (
+//                 <TableRow key={dept._id}>
+//                   <TableCell className="font-medium">{dept.name}</TableCell>
+//                   <TableCell>{dept.code}</TableCell>
+//                   <TableCell>{dept.description}</TableCell>
+//                   <TableCell>
+//                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+//                       {dept.isActive ? 'Active' : 'Inactive'}
+//                     </span>
+//                   </TableCell>
+//                 </TableRow>
+//               ))}
+//             </TableBody>
+//           </Table>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// };
+
+// const CourseManagement = () => {
+//   const [courses, setCourses] = useState([]);
+//   const [departments, setDepartments] = useState([]);
+//   const [showForm, setShowForm] = useState(false);
+//   const [formData, setFormData] = useState({
+//     name: '', code: '', departmentId: '', programType: '', duration: '',
+//     totalSeats: '', eligibilityPercentage: '', feesPerSemester: '', description: ''
+//   });
+
+//   useEffect(() => {
+//     fetchCourses();
+//     fetchDepartments();
+//   }, []);
+
+//   const fetchCourses = async () => {
+//     try {
+//       const response = await api.get('/api/courses');
+//       setCourses(response.data);
+//     } catch (error) {
+//       toast.error('Failed to fetch courses');
+//     }
+//   };
+
+//   const fetchDepartments = async () => {
+//     try {
+//       const response = await api.get('/api/departments');
+//       setDepartments(response.data);
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       await api.post('/api/courses', formData);
+//       toast.success('Course created successfully');
+//       setShowForm(false);
+//       fetchCourses();
+//       setFormData({
+//         name: '', code: '', departmentId: '', programType: '', duration: '',
+//         totalSeats: '', eligibilityPercentage: '', feesPerSemester: '', description: ''
+//       });
+//     } catch (error) {
+//       toast.error(error.response?.data?.error || 'Failed to create course');
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex justify-between items-center mb-8">
+//         <h1 className="font-serif text-4xl font-bold text-brand-blue">Course Management</h1>
+//         <Button onClick={() => setShowForm(!showForm)} className="bg-brand-blue" data-testid="add-course-button">
+//           {showForm ? 'Cancel' : 'Add Course'}
+//         </Button>
+//       </div>
+
+//       {showForm && (
+//         <Card className="mb-8">
+//           <CardHeader>
+//             <CardTitle>Create New Course</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <form onSubmit={handleSubmit} className="space-y-4">
+//               <div className="grid grid-cols-2 gap-4">
+//                 <div>
+//                   <Label>Course Name</Label>
+//                   <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required data-testid="course-name-input" />
+//                 </div>
+//                 <div>
+//                   <Label>Course Code</Label>
+//                   <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required data-testid="course-code-input" />
+//                 </div>
+//                 <div>
+//                   <Label>Department</Label>
+//                   <Select onValueChange={(value) => setFormData({...formData, departmentId: value})} required>
+//                     <SelectTrigger data-testid="department-select">
+//                       <SelectValue placeholder="Select department" />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       {departments.map(dept => (
+//                         <SelectItem key={dept._id} value={dept._id}>{dept.name}</SelectItem>
+//                       ))}
+//                     </SelectContent>
+//                   </Select>
+//                 </div>
+//                 <div>
+//                   <Label>Program Type</Label>
+//                   <Select onValueChange={(value) => setFormData({...formData, programType: value})} required>
+//                     <SelectTrigger data-testid="program-type-select">
+//                       <SelectValue placeholder="Select type" />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       <SelectItem value="UG">Undergraduate (UG)</SelectItem>
+//                       <SelectItem value="PG">Postgraduate (PG)</SelectItem>
+//                     </SelectContent>
+//                   </Select>
+//                 </div>
+//                 <div>
+//                   <Label>Duration (years)</Label>
+//                   <Input type="number" value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value})} required data-testid="duration-input" />
+//                 </div>
+//                 <div>
+//                   <Label>Total Seats</Label>
+//                   <Input type="number" value={formData.totalSeats} onChange={(e) => setFormData({...formData, totalSeats: e.target.value})} required data-testid="seats-input" />
+//                 </div>
+//                 <div>
+//                   <Label>Eligibility %</Label>
+//                   <Input type="number" value={formData.eligibilityPercentage} onChange={(e) => setFormData({...formData, eligibilityPercentage: e.target.value})} required data-testid="eligibility-input" />
+//                 </div>
+//                 <div>
+//                   <Label>Fees per Semester</Label>
+//                   <Input type="number" value={formData.feesPerSemester} onChange={(e) => setFormData({...formData, feesPerSemester: e.target.value})} data-testid="fees-input" />
+//                 </div>
+//               </div>
+//               <div>
+//                 <Label>Description</Label>
+//                 <Input value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+//               </div>
+//               <Button type="submit" className="bg-brand-blue" data-testid="submit-course-button">Create Course</Button>
+//             </form>
+//           </CardContent>
+//         </Card>
+//       )}
+
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>All Courses</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <Table>
+//             <TableHeader>
+//               <TableRow>
+//                 <TableHead>Name</TableHead>
+//                 <TableHead>Code</TableHead>
+//                 <TableHead>Type</TableHead>
+//                 <TableHead>Duration</TableHead>
+//                 <TableHead>Seats</TableHead>
+//                 <TableHead>Eligibility</TableHead>
+//                 <TableHead>Fees</TableHead>
+//               </TableRow>
+//             </TableHeader>
+//             <TableBody>
+//               {courses.map((course) => (
+//                 <TableRow key={course._id} data-testid={`course-item-${course.code}`}>
+//                   <TableCell className="font-medium">{course.name}</TableCell>
+//                   <TableCell>{course.code}</TableCell>
+//                   <TableCell>{course.programType}</TableCell>
+//                   <TableCell>{course.duration} years</TableCell>
+//                   <TableCell>{course.availableSeats}/{course.totalSeats}</TableCell>
+//                   <TableCell>{course.eligibilityPercentage}%</TableCell>
+//                   <TableCell>₹{course.feesPerSemester || 0}</TableCell>
+//                 </TableRow>
+//               ))}
+//             </TableBody>
+//           </Table>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// };
+
 const DepartmentManagement = () => {
   const [departments, setDepartments] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', code: '', description: '' });
+  const [editingDepartment, setEditingDepartment] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    code: "",
+    description: "",
+  });
 
   useEffect(() => {
     fetchDepartments();
@@ -201,55 +579,127 @@ const DepartmentManagement = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/departments/');
+      const response = await api.get("/api/departments/");
       setDepartments(response.data);
     } catch (error) {
-      toast.error('Failed to fetch departments');
+      toast.error("Failed to fetch departments");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/departments', formData);
-      toast.success('Department created successfully');
+      if (editingDepartment) {
+        // Update department
+        await api.put(`/api/departments/${editingDepartment._id}`, formData);
+        toast.success("Department updated successfully");
+      } else {
+        // Create new department
+        await api.post("/api/departments/", formData);
+        toast.success("Department created successfully");
+      }
+
       setShowForm(false);
-      setFormData({ name: '', code: '', description: '' });
+      setEditingDepartment(null);
+      setFormData({ name: "", code: "", description: "" });
       fetchDepartments();
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to create department');
+      toast.error(error.response?.data?.error || "Failed to save department");
+    }
+  };
+
+  const handleEdit = (department) => {
+    setFormData({
+      name: department.name,
+      code: department.code,
+      description: department.description || "",
+    });
+    setEditingDepartment(department);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (departmentId) => {
+    if (!window.confirm("Are you sure you want to delete this department?"))
+      return;
+
+    try {
+      await api.delete(`/api/departments/${departmentId}`);
+      toast.success("Department deleted successfully");
+      fetchDepartments();
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to delete department");
     }
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="font-serif text-4xl font-bold text-brand-blue">Department Management</h1>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-brand-blue" data-testid="add-department-button">
-          {showForm ? 'Cancel' : 'Add Department'}
+        <h1 className="font-serif text-4xl font-bold text-brand-blue">
+          Department Management
+        </h1>
+        <Button
+          onClick={() => {
+            setShowForm(!showForm);
+            if (showForm) {
+              setEditingDepartment(null);
+              setFormData({ name: "", code: "", description: "" });
+            }
+          }}
+          className="bg-brand-blue"
+          data-testid="add-department-button"
+        >
+          {showForm ? "Cancel" : "Add Department"}
         </Button>
       </div>
 
       {showForm && (
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Create New Department</CardTitle>
+            <CardTitle>
+              {editingDepartment ? "Edit Department" : "Create New Department"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label>Department Name</Label>
-                <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required data-testid="dept-name-input" />
+                <Input
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
+                  data-testid="dept-name-input"
+                />
               </div>
               <div>
                 <Label>Department Code</Label>
-                <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required data-testid="dept-code-input" />
+                <Input
+                  value={formData.code}
+                  onChange={(e) =>
+                    setFormData({ ...formData, code: e.target.value })
+                  }
+                  required
+                  data-testid="dept-code-input"
+                />
               </div>
               <div>
                 <Label>Description</Label>
-                <Input value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} data-testid="dept-desc-input" />
+                <Input
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  data-testid="dept-desc-input"
+                />
               </div>
-              <Button type="submit" className="bg-brand-blue" data-testid="submit-dept-button">Create Department</Button>
+              <Button
+                type="submit"
+                className="bg-brand-blue"
+                data-testid="submit-dept-button"
+              >
+                {editingDepartment ? "Update Department" : "Create Department"}
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -267,18 +717,46 @@ const DepartmentManagement = () => {
                 <TableHead>Code</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {departments.map((dept) => (
-                <TableRow key={dept._id}>
+                <TableRow
+                  key={dept._id}
+                  data-testid={`department-item-${dept.code || dept._id}`}
+                >
                   <TableCell className="font-medium">{dept.name}</TableCell>
                   <TableCell>{dept.code}</TableCell>
-                  <TableCell>{dept.description}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {dept.description}
+                  </TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                      {dept.isActive ? 'Active' : 'Inactive'}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${dept.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                    >
+                      {dept.isActive ? "Active" : "Inactive"}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-right flex gap-2 justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(dept)}
+                      data-testid={`edit-dept-${dept.code || dept._id}`}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(dept._id)}
+                      data-testid={`delete-dept-${dept.code || dept._id}`}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -291,13 +769,58 @@ const DepartmentManagement = () => {
 };
 
 const CourseManagement = () => {
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+
   const [courses, setCourses] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', code: '', departmentId: '', programType: '', duration: '', 
-    totalSeats: '', eligibilityPercentage: '', feesPerSemester: '', description: ''
+    name: "",
+    code: "",
+    departmentId: "",
+    programType: "",
+    duration: "",
+    totalSeats: "",
+    eligibilityPercentage: "",
+    feesPerSemester: "",
+    description: "",
   });
+
+  // 🟢 OPEN EDIT MODAL
+  const openEdit = (course) => {
+    console.log("shdfjkska");
+    setSelectedCourse(course);
+    setEditOpen(true);
+  };
+
+  // 🟢 UPDATE COURSE
+  const updateCourse = async () => {
+    try {
+      await api.put(
+        `http://localhost:8001/api/courses/${selectedCourse._id}`,
+        selectedCourse,
+      );
+      toast.success("Course updated successfully");
+      setEditOpen(false);
+      fetchCourses();
+    } catch (error) {
+      toast.error("Failed to update course");
+    }
+  };
+
+  // 🔴 DELETE COURSE
+  const deleteCourse = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this course?")) return;
+
+    try {
+      await api.delete(`http://localhost:8001/api/courses/${id}`);
+      toast.success("Course deleted successfully");
+      fetchCourses();
+    } catch (error) {
+      toast.error("Failed to delete course");
+    }
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -306,16 +829,16 @@ const CourseManagement = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await api.get('/api/courses');
+      const response = await api.get("/api/courses");
       setCourses(response.data);
     } catch (error) {
-      toast.error('Failed to fetch courses');
+      toast.error("Failed to fetch courses");
     }
   };
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/departments');
+      const response = await api.get("/api/courses/departments/all");
       setDepartments(response.data);
     } catch (error) {
       console.error(error);
@@ -325,25 +848,38 @@ const CourseManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/courses', formData);
-      toast.success('Course created successfully');
+      await api.post("/api/courses", formData);
+      toast.success("Course created successfully");
       setShowForm(false);
       fetchCourses();
       setFormData({
-        name: '', code: '', departmentId: '', programType: '', duration: '', 
-        totalSeats: '', eligibilityPercentage: '', feesPerSemester: '', description: ''
+        name: "",
+        code: "",
+        departmentId: "",
+        programType: "",
+        duration: "",
+        totalSeats: "",
+        eligibilityPercentage: "",
+        feesPerSemester: "",
+        description: "",
       });
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to create course');
+      toast.error(error.response?.data?.error || "Failed to create course");
     }
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="font-serif text-4xl font-bold text-brand-blue">Course Management</h1>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-brand-blue" data-testid="add-course-button">
-          {showForm ? 'Cancel' : 'Add Course'}
+        <h1 className="font-serif text-4xl font-bold text-brand-blue">
+          Course Management
+        </h1>
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-brand-blue"
+          data-testid="add-course-button"
+        >
+          {showForm ? "Cancel" : "Add Course"}
         </Button>
       </div>
 
@@ -357,28 +893,54 @@ const CourseManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Course Name</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required data-testid="course-name-input" />
+                  <Input
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    required
+                    data-testid="course-name-input"
+                  />
                 </div>
                 <div>
                   <Label>Course Code</Label>
-                  <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required data-testid="course-code-input" />
+                  <Input
+                    value={formData.code}
+                    onChange={(e) =>
+                      setFormData({ ...formData, code: e.target.value })
+                    }
+                    required
+                    data-testid="course-code-input"
+                  />
                 </div>
                 <div>
                   <Label>Department</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, departmentId: value})} required>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, departmentId: value })
+                    }
+                    required
+                  >
                     <SelectTrigger data-testid="department-select">
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
                     <SelectContent>
-                      {departments.map(dept => (
-                        <SelectItem key={dept._id} value={dept._id}>{dept.name}</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept._id} value={dept._id}>
+                          {dept.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <Label>Program Type</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, programType: value})} required>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, programType: value })
+                    }
+                    required
+                  >
                     <SelectTrigger data-testid="program-type-select">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -390,26 +952,74 @@ const CourseManagement = () => {
                 </div>
                 <div>
                   <Label>Duration (years)</Label>
-                  <Input type="number" value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value})} required data-testid="duration-input" />
+                  <Input
+                    type="number"
+                    value={formData.duration}
+                    onChange={(e) =>
+                      setFormData({ ...formData, duration: e.target.value })
+                    }
+                    required
+                    data-testid="duration-input"
+                  />
                 </div>
                 <div>
                   <Label>Total Seats</Label>
-                  <Input type="number" value={formData.totalSeats} onChange={(e) => setFormData({...formData, totalSeats: e.target.value})} required data-testid="seats-input" />
+                  <Input
+                    type="number"
+                    value={formData.totalSeats}
+                    onChange={(e) =>
+                      setFormData({ ...formData, totalSeats: e.target.value })
+                    }
+                    required
+                    data-testid="seats-input"
+                  />
                 </div>
                 <div>
                   <Label>Eligibility %</Label>
-                  <Input type="number" value={formData.eligibilityPercentage} onChange={(e) => setFormData({...formData, eligibilityPercentage: e.target.value})} required data-testid="eligibility-input" />
+                  <Input
+                    type="number"
+                    value={formData.eligibilityPercentage}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        eligibilityPercentage: e.target.value,
+                      })
+                    }
+                    required
+                    data-testid="eligibility-input"
+                  />
                 </div>
                 <div>
                   <Label>Fees per Semester</Label>
-                  <Input type="number" value={formData.feesPerSemester} onChange={(e) => setFormData({...formData, feesPerSemester: e.target.value})} data-testid="fees-input" />
+                  <Input
+                    type="number"
+                    value={formData.feesPerSemester}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        feesPerSemester: e.target.value,
+                      })
+                    }
+                    data-testid="fees-input"
+                  />
                 </div>
               </div>
               <div>
                 <Label>Description</Label>
-                <Input value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+                <Input
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
               </div>
-              <Button type="submit" className="bg-brand-blue" data-testid="submit-course-button">Create Course</Button>
+              <Button
+                type="submit"
+                className="bg-brand-blue"
+                data-testid="submit-course-button"
+              >
+                Create Course
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -430,18 +1040,109 @@ const CourseManagement = () => {
                 <TableHead>Seats</TableHead>
                 <TableHead>Eligibility</TableHead>
                 <TableHead>Fees</TableHead>
+                <TableHead className="text-right  ">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {courses.map((course) => (
-                <TableRow key={course._id} data-testid={`course-item-${course.code}`}>
+                <TableRow
+                  key={course._id}
+                  data-testid={`course-item-${course.code}`}
+                >
                   <TableCell className="font-medium">{course.name}</TableCell>
                   <TableCell>{course.code}</TableCell>
                   <TableCell>{course.programType}</TableCell>
                   <TableCell>{course.duration} years</TableCell>
-                  <TableCell>{course.availableSeats}/{course.totalSeats}</TableCell>
+                  <TableCell>
+                    {course.availableSeats}/{course.totalSeats}
+                  </TableCell>
                   <TableCell>{course.eligibilityPercentage}%</TableCell>
                   <TableCell>₹{course.feesPerSemester || 0}</TableCell>
+
+                  <TableCell className="text-right space-x-2">
+                    <Button
+                      className="bg-green-500"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openEdit(course)}
+                    >
+                      Edit
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteCourse(course._id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+
+                  <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Course</DialogTitle>
+                      </DialogHeader>
+
+                      {selectedCourse && (
+                        <div className="space-y-4">
+                          <Input
+                            placeholder="Course Name"
+                            value={selectedCourse.name}
+                            onChange={(e) =>
+                              setSelectedCourse({
+                                ...selectedCourse,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+
+                          <Input
+                            type="number"
+                            placeholder="Duration"
+                            value={selectedCourse.duration}
+                            onChange={(e) =>
+                              setSelectedCourse({
+                                ...selectedCourse,
+                                duration: e.target.value,
+                              })
+                            }
+                          />
+
+                          <Input
+                            type="number"
+                            placeholder="Total Seats"
+                            value={selectedCourse.totalSeats}
+                            onChange={(e) =>
+                              setSelectedCourse({
+                                ...selectedCourse,
+                                totalSeats: e.target.value,
+                              })
+                            }
+                          />
+
+                          <Input
+                            type="number"
+                            placeholder="Fees per Semester"
+                            value={selectedCourse.feesPerSemester}
+                            onChange={(e) =>
+                              setSelectedCourse({
+                                ...selectedCourse,
+                                feesPerSemester: e.target.value,
+                              })
+                            }
+                          />
+
+                          <Button
+                            className="w-full bg-brand-blue"
+                            onClick={updateCourse}
+                          >
+                            Update Course
+                          </Button>
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
                 </TableRow>
               ))}
             </TableBody>
@@ -455,10 +1156,16 @@ const CourseManagement = () => {
 const SubjectManagement = () => {
   const [subjects, setSubjects] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', code: '', courseId: '', semester: '', credits: '', description: '', isElective: false
+    name: "",
+    code: "",
+    courseId: "",
+    semester: "",
+    credits: "",
+    description: "",
+    isElective: false,
   });
 
   useEffect(() => {
@@ -473,10 +1180,10 @@ const SubjectManagement = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await api.get('/api/courses');
+      const response = await api.get("/api/courses");
       setCourses(response.data);
     } catch (error) {
-      toast.error('Failed to fetch courses');
+      toast.error("Failed to fetch courses");
     }
   };
 
@@ -485,29 +1192,47 @@ const SubjectManagement = () => {
       const response = await api.get(`/api/courses/${selectedCourse}/subjects`);
       setSubjects(response.data);
     } catch (error) {
-      toast.error('Failed to fetch subjects');
+      toast.error("Failed to fetch subjects");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/courses/subjects', { ...formData, courseId: selectedCourse });
-      toast.success('Subject created successfully');
+      await api.post("/api/courses/subjects", {
+        ...formData,
+        courseId: selectedCourse,
+      });
+      toast.success("Subject created successfully");
       setShowForm(false);
       fetchSubjects();
-      setFormData({ name: '', code: '', courseId: '', semester: '', credits: '', description: '', isElective: false });
+      setFormData({
+        name: "",
+        code: "",
+        courseId: "",
+        semester: "",
+        credits: "",
+        description: "",
+        isElective: false,
+      });
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to create subject');
+      toast.error(error.response?.data?.error || "Failed to create subject");
     }
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="font-serif text-4xl font-bold text-brand-blue">Subject Management</h1>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-brand-blue" disabled={!selectedCourse} data-testid="add-subject-button">
-          {showForm ? 'Cancel' : 'Add Subject'}
+        <h1 className="font-serif text-4xl font-bold text-brand-blue">
+          Subject Management
+        </h1>
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-brand-blue"
+          disabled={!selectedCourse}
+          data-testid="add-subject-button"
+        >
+          {showForm ? "Cancel" : "Add Subject"}
         </Button>
       </div>
 
@@ -521,8 +1246,10 @@ const SubjectManagement = () => {
               <SelectValue placeholder="Select a course" />
             </SelectTrigger>
             <SelectContent>
-              {courses.map(course => (
-                <SelectItem key={course._id} value={course._id}>{course.name} ({course.code})</SelectItem>
+              {courses.map((course) => (
+                <SelectItem key={course._id} value={course._id}>
+                  {course.name} ({course.code})
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -539,30 +1266,79 @@ const SubjectManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Subject Name</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required data-testid="subject-name-input" />
+                  <Input
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    required
+                    data-testid="subject-name-input"
+                  />
                 </div>
                 <div>
                   <Label>Subject Code</Label>
-                  <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required data-testid="subject-code-input" />
+                  <Input
+                    value={formData.code}
+                    onChange={(e) =>
+                      setFormData({ ...formData, code: e.target.value })
+                    }
+                    required
+                    data-testid="subject-code-input"
+                  />
                 </div>
                 <div>
                   <Label>Semester</Label>
-                  <Input type="number" value={formData.semester} onChange={(e) => setFormData({...formData, semester: e.target.value})} required data-testid="semester-input" />
+                  <Input
+                    type="number"
+                    value={formData.semester}
+                    onChange={(e) =>
+                      setFormData({ ...formData, semester: e.target.value })
+                    }
+                    required
+                    data-testid="semester-input"
+                  />
                 </div>
                 <div>
                   <Label>Credits</Label>
-                  <Input type="number" value={formData.credits} onChange={(e) => setFormData({...formData, credits: e.target.value})} required data-testid="credits-input" />
+                  <Input
+                    type="number"
+                    value={formData.credits}
+                    onChange={(e) =>
+                      setFormData({ ...formData, credits: e.target.value })
+                    }
+                    required
+                    data-testid="credits-input"
+                  />
                 </div>
               </div>
               <div>
                 <Label>Description</Label>
-                <Input value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+                <Input
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
               </div>
               <div className="flex items-center space-x-2">
-                <input type="checkbox" id="elective" checked={formData.isElective} onChange={(e) => setFormData({...formData, isElective: e.target.checked})} data-testid="elective-checkbox" />
+                <input
+                  type="checkbox"
+                  id="elective"
+                  checked={formData.isElective}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isElective: e.target.checked })
+                  }
+                  data-testid="elective-checkbox"
+                />
                 <Label htmlFor="elective">Is Elective</Label>
               </div>
-              <Button type="submit" className="bg-brand-blue" data-testid="submit-subject-button">Create Subject</Button>
+              <Button
+                type="submit"
+                className="bg-brand-blue"
+                data-testid="submit-subject-button"
+              >
+                Create Subject
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -587,13 +1363,17 @@ const SubjectManagement = () => {
               <TableBody>
                 {subjects.map((subject) => (
                   <TableRow key={subject._id}>
-                    <TableCell className="font-medium">{subject.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {subject.name}
+                    </TableCell>
                     <TableCell>{subject.code}</TableCell>
                     <TableCell>{subject.semester}</TableCell>
                     <TableCell>{subject.credits}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${subject.isElective ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                        {subject.isElective ? 'Elective' : 'Core'}
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${subject.isElective ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"}`}
+                      >
+                        {subject.isElective ? "Elective" : "Core"}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -607,19 +1387,21 @@ const SubjectManagement = () => {
   );
 };
 
-const StatsCard = ({ title, value, icon, color = 'blue' }) => {
+const StatsCard = ({ title, value, icon, color = "blue" }) => {
   const colors = {
-    blue: 'text-blue-600 bg-blue-100',
-    green: 'text-green-600 bg-green-100',
-    yellow: 'text-yellow-600 bg-yellow-100',
-    red: 'text-red-600 bg-red-100',
-    purple: 'text-purple-600 bg-purple-100'
+    blue: "text-blue-600 bg-blue-100",
+    green: "text-green-600 bg-green-100",
+    yellow: "text-yellow-600 bg-yellow-100",
+    red: "text-red-600 bg-red-100",
+    purple: "text-purple-600 bg-purple-100",
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-slate-600">
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
@@ -643,42 +1425,104 @@ const Sidebar = ({ user, onLogout }) => (
       <p className="text-sm text-slate-400 uppercase">{user.role}</p>
     </div>
     <nav className="space-y-2 mb-20">
-      <Link to="/admin" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-dashboard">
-        <Home className="inline h-4 w-4 mr-2" />Dashboard
+      <Link
+        to="/admin"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-dashboard"
+      >
+        <Home className="inline h-4 w-4 mr-2" />
+        Dashboard
       </Link>
-      <Link to="/admin/departments" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-departments">
-        <Building className="inline h-4 w-4 mr-2" />Departments
+      <Link
+        to="/admin/departments"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-departments"
+      >
+        <Building className="inline h-4 w-4 mr-2" />
+        Departments
       </Link>
-      <Link to="/admin/courses" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-courses">
-        <BookOpen className="inline h-4 w-4 mr-2" />Courses
+      <Link
+        to="/admin/courses"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-courses"
+      >
+        <BookOpen className="inline h-4 w-4 mr-2" />
+        Courses
       </Link>
-      <Link to="/admin/subjects" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-subjects">
-        <FileText className="inline h-4 w-4 mr-2" />Subjects
+      <Link
+        to="/admin/subjects"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-subjects"
+      >
+        <FileText className="inline h-4 w-4 mr-2" />
+        Subjects
       </Link>
-      <Link to="/admin/faculty" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-faculty">
-        <UserPlus className="inline h-4 w-4 mr-2" />Faculty
+      <Link
+        to="/admin/faculty"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-faculty"
+      >
+        <UserPlus className="inline h-4 w-4 mr-2" />
+        Faculty
       </Link>
-      <Link to="/admin/applications" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-applications">
-        <FileText className="inline h-4 w-4 mr-2" />Applications
+      <Link
+        to="/admin/applications"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-applications"
+      >
+        <FileText className="inline h-4 w-4 mr-2" />
+        Applications
       </Link>
-      <Link to="/admin/merit" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-merit">
-        <TrendingUp className="inline h-4 w-4 mr-2" />Merit Generation
+      <Link
+        to="/admin/merit"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-merit"
+      >
+        <TrendingUp className="inline h-4 w-4 mr-2" />
+        Merit Generation
       </Link>
-      <Link to="/admin/enrollments" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-enrollments">
-        <Users className="inline h-4 w-4 mr-2" />Enrollments
+      <Link
+        to="/admin/enrollments"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-enrollments"
+      >
+        <Users className="inline h-4 w-4 mr-2" />
+        Enrollments
       </Link>
-      <Link to="/admin/exams" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-exams">
-        <FileText className="inline h-4 w-4 mr-2" />Exams
+      <Link
+        to="/admin/exams"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-exams"
+      >
+        <FileText className="inline h-4 w-4 mr-2" />
+        Exams
       </Link>
-      <Link to="/admin/hostels" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-hostels">
-        <Building className="inline h-4 w-4 mr-2" />Hostels
+      <Link
+        to="/admin/hostels"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-hostels"
+      >
+        <Building className="inline h-4 w-4 mr-2" />
+        Hostels
       </Link>
-      <Link to="/admin/fees" className="block px-4 py-2 rounded-md hover:bg-slate-800" data-testid="nav-fees">
-        <DollarSign className="inline h-4 w-4 mr-2" />Fees
+      <Link
+        to="/admin/fees"
+        className="block px-4 py-2 rounded-md hover:bg-slate-800"
+        data-testid="nav-fees"
+      >
+        <DollarSign className="inline h-4 w-4 mr-2" />
+        Fees
       </Link>
     </nav>
     <div className="fixed bottom-0 left-0 w-64 bg-slate-900 p-6 border-t border-slate-800">
-      <Button variant="outline" className="w-full" onClick={onLogout} data-testid="sidebar-logout">Logout</Button>
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={onLogout}
+        data-testid="sidebar-logout"
+      >
+        Logout
+      </Button>
     </div>
   </div>
 );
