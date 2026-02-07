@@ -43,6 +43,74 @@ router.post('/', auth, roleAuth('admin'), async (req, res) => {
   }
 });
 
+// Update faculty (Admin only)
+router.put('/:id', auth, roleAuth('admin'), async (req, res) => {
+  try {
+    const { email, fullName, phone, ...facultyData } = req.body;
+
+    const faculty = await Faculty.findById(req.params.id);
+
+    if (!faculty) {
+      return res.status(404).json({ error: 'Faculty not found' });
+    }
+
+    // Update user details if provided
+    if (email || fullName || phone) {
+      const userUpdate = {};
+      if (email) userUpdate.email = email;
+      if (fullName) userUpdate.fullName = fullName;
+      if (phone) userUpdate.phone = phone;
+
+      await User.findByIdAndUpdate(faculty.userId, userUpdate);
+    }
+
+    // Update faculty profile
+    const updatedFaculty = await Faculty.findByIdAndUpdate(
+      req.params.id,
+      facultyData,
+      { new: true, runValidators: true }
+    )
+      .populate('userId', 'fullName email phone')
+      .populate('departmentId', 'name code')
+      .populate('assignedSubjects', 'name code');
+
+    res.json({
+      message: 'Faculty updated successfully',
+      faculty: updatedFaculty
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete faculty (Admin only) - Soft delete
+router.delete('/:id', auth, roleAuth('admin'), async (req, res) => {
+  try {
+    const faculty = await Faculty.findById(req.params.id);
+
+    if (!faculty) {
+      return res.status(404).json({ error: 'Faculty not found' });
+    }
+
+    // Soft delete faculty profile
+    await Faculty.findByIdAndUpdate(
+      req.params.id,
+      { isActive: false },
+      { new: true }
+    );
+
+    // Deactivate user account
+    await User.findByIdAndUpdate(
+      faculty.userId,
+      { isActive: false }
+    );
+
+    res.json({ message: 'Faculty deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get all faculty (Admin)
 router.get('/', auth, roleAuth('admin'), async (req, res) => {
   try {
