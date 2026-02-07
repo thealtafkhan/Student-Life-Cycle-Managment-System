@@ -40,7 +40,7 @@ const HomePage = ({ user, onLogout }) => {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
               <GraduationCap className="h-8 w-8 text-brand-blue" />
-              <span className="font-serif text-2xl font-bold text-brand-blue">SLMS</span>
+              <span className="font-serif text-2xl font-bold text-brand-blue">Student Life Cycle Management System</span>
             </Link>
             
             <div className="flex items-center space-x-6">
@@ -225,7 +225,7 @@ const HomePage = ({ user, onLogout }) => {
                 <span className="font-serif text-2xl font-bold">SLMS</span>
               </div>
               <p className="text-slate-400">
-                Empowering students with world-class education since 1950.
+                Empowering students with world-class education since 1875.
               </p>
             </div>
             <div>
@@ -237,16 +237,16 @@ const HomePage = ({ user, onLogout }) => {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
+              <h4 className="font-semibold mb-4">Contact Us.</h4>
               <ul className="space-y-2 text-slate-400">
-                <li>Email: admissions@SLMS.edu</li>
+                <li>Email: admissions@slmsS.edu</li>
                 <li>Phone: +1 (555) 123-4567</li>
-                <li>Address: 123 University Ave</li>
+                <li>Address: Aligarh, Uttar Pradesh</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
-            <p>&copy; {new Date().getFullYear()} SLMS. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Team Stark. All rights reserved.</p>
           </div>
         </div>
       </footer>
