@@ -36,7 +36,7 @@ export const FacultyManagement = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/courses/departments/');
+      const response = await api.get('/api/departments/');
       setDepartments(response.data);
     } catch (error) {
       console.error(error);
@@ -61,14 +61,14 @@ export const FacultyManagement = () => {
     e.preventDefault();
     try {
       const response = await api.post('/api/faculty', formData);
-      
+
       // Assign subjects to the newly created faculty
       if (selectedSubjects.length > 0) {
-        await api.post(`/api/faculty/${response.data.faculty._id}/assign-subjects`, { 
-          subjectIds: selectedSubjects 
+        await api.post(`/api/faculty/${response.data.faculty._id}/assign-subjects`, {
+          subjectIds: selectedSubjects
         });
       }
-      
+
       toast.success('Faculty created and subjects assigned successfully');
       setShowForm(false);
       setSelectedSubjects([]);
@@ -83,8 +83,8 @@ export const FacultyManagement = () => {
   };
 
   const toggleSubject = (subjectId) => {
-    setSelectedSubjects(prev => 
-      prev.includes(subjectId) 
+    setSelectedSubjects(prev =>
+      prev.includes(subjectId)
         ? prev.filter(id => id !== subjectId)
         : [...prev, subjectId]
     );
@@ -109,27 +109,27 @@ export const FacultyManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Full Name</Label>
-                  <Input value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})} required data-testid="faculty-name-input" />
+                  <Input value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required data-testid="faculty-name-input" />
                 </div>
                 <div>
                   <Label>Email</Label>
-                  <Input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required data-testid="faculty-email-input" />
+                  <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required data-testid="faculty-email-input" />
                 </div>
                 <div>
                   <Label>Phone</Label>
-                  <Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} required data-testid="faculty-phone-input" />
+                  <Input value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required data-testid="faculty-phone-input" />
                 </div>
                 <div>
                   <Label>Password</Label>
-                  <Input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required data-testid="faculty-password-input" />
+                  <Input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required data-testid="faculty-password-input" />
                 </div>
                 <div>
                   <Label>Employee ID</Label>
-                  <Input value={formData.employeeId} onChange={(e) => setFormData({...formData, employeeId: e.target.value})} required data-testid="faculty-empid-input" />
+                  <Input value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} required data-testid="faculty-empid-input" />
                 </div>
                 <div>
                   <Label>Department</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, departmentId: value})} required>
+                  <Select onValueChange={(value) => setFormData({ ...formData, departmentId: value })} required>
                     <SelectTrigger data-testid="faculty-dept-select">
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
@@ -142,19 +142,19 @@ export const FacultyManagement = () => {
                 </div>
                 <div>
                   <Label>Designation</Label>
-                  <Input value={formData.designation} onChange={(e) => setFormData({...formData, designation: e.target.value})} data-testid="faculty-designation-input" />
+                  <Input value={formData.designation} onChange={(e) => setFormData({ ...formData, designation: e.target.value })} data-testid="faculty-designation-input" />
                 </div>
                 <div>
                   <Label>Qualification</Label>
-                  <Input value={formData.qualification} onChange={(e) => setFormData({...formData, qualification: e.target.value})} data-testid="faculty-qualification-input" />
+                  <Input value={formData.qualification} onChange={(e) => setFormData({ ...formData, qualification: e.target.value })} data-testid="faculty-qualification-input" />
                 </div>
                 <div>
                   <Label>Specialization</Label>
-                  <Input value={formData.specialization} onChange={(e) => setFormData({...formData, specialization: e.target.value})} />
+                  <Input value={formData.specialization} onChange={(e) => setFormData({ ...formData, specialization: e.target.value })} />
                 </div>
                 <div>
                   <Label>Experience (years)</Label>
-                  <Input type="number" value={formData.experience} onChange={(e) => setFormData({...formData, experience: e.target.value})} />
+                  <Input type="number" value={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} />
                 </div>
               </div>
 
@@ -251,7 +251,7 @@ export const ApplicationManagement = () => {
   return (
     <div>
       <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8">Application Management</h1>
-      
+
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Filter Applications</CardTitle>
@@ -370,7 +370,7 @@ export const MeritGeneration = () => {
   return (
     <div>
       <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8">Merit List Generation</h1>
-      
+
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Generate Merit List</CardTitle>
@@ -392,17 +392,17 @@ export const MeritGeneration = () => {
             </Select>
           </div>
           <div className="flex space-x-4">
-            <Button 
-              onClick={handleGenerateMerit} 
-              disabled={loading || !selectedCourse} 
+            <Button
+              onClick={handleGenerateMerit}
+              disabled={loading || !selectedCourse}
               className="bg-brand-gold hover:bg-brand-gold/90"
               data-testid="generate-merit-button"
             >
               {loading ? 'Generating...' : 'Generate Merit List'}
             </Button>
-            <Button 
-              onClick={fetchMeritList} 
-              disabled={!selectedCourse} 
+            <Button
+              onClick={fetchMeritList}
+              disabled={!selectedCourse}
               variant="outline"
               data-testid="view-merit-button"
             >
@@ -436,9 +436,8 @@ export const MeritGeneration = () => {
                     <TableCell>{item.student?.email || item.userId?.email}</TableCell>
                     <TableCell>{item.percentage}%</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                        item.status === 'selected' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${item.status === 'selected' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
                         {item.status}
                       </span>
                     </TableCell>
@@ -488,7 +487,7 @@ export const EnrollmentManagement = () => {
   return (
     <div>
       <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8">Enrollment Management</h1>
-      
+
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Filter by Course</CardTitle>
@@ -506,8 +505,8 @@ export const EnrollmentManagement = () => {
               </SelectContent>
             </Select>
             {filterCourse && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setFilterCourse('')}
                 size="sm"
               >
@@ -545,9 +544,8 @@ export const EnrollmentManagement = () => {
                   <TableCell>{enrollment.currentSemester}</TableCell>
                   <TableCell>{enrollment.enrollmentYear}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                      enrollment.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${enrollment.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {enrollment.status}
                     </span>
                   </TableCell>
@@ -624,15 +622,15 @@ export const HostelManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Hostel Name</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
+                  <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Hostel Code</Label>
-                  <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} required />
+                  <Input value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Gender</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, gender: value})} required>
+                  <Select onValueChange={(value) => setFormData({ ...formData, gender: value })} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
@@ -645,20 +643,20 @@ export const HostelManagement = () => {
                 </div>
                 <div>
                   <Label>Total Rooms</Label>
-                  <Input type="number" value={formData.totalRooms} onChange={(e) => setFormData({...formData, totalRooms: e.target.value})} required />
+                  <Input type="number" value={formData.totalRooms} onChange={(e) => setFormData({ ...formData, totalRooms: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Capacity per Room</Label>
-                  <Input type="number" value={formData.capacityPerRoom} onChange={(e) => setFormData({...formData, capacityPerRoom: e.target.value})} required />
+                  <Input type="number" value={formData.capacityPerRoom} onChange={(e) => setFormData({ ...formData, capacityPerRoom: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Fee per Semester</Label>
-                  <Input type="number" value={formData.feePerSemester} onChange={(e) => setFormData({...formData, feePerSemester: e.target.value})} />
+                  <Input type="number" value={formData.feePerSemester} onChange={(e) => setFormData({ ...formData, feePerSemester: e.target.value })} />
                 </div>
               </div>
               <div>
                 <Label>Address</Label>
-                <Input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} />
+                <Input value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
               </div>
               <Button type="submit" className="bg-brand-blue">Create Hostel</Button>
             </form>
@@ -723,9 +721,8 @@ export const HostelManagement = () => {
                   <TableCell>{allocation.roomNumber}</TableCell>
                   <TableCell>{new Date(allocation.allocationDate).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                      allocation.status === 'allocated' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${allocation.status === 'allocated' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {allocation.status}
                     </span>
                   </TableCell>
@@ -757,7 +754,7 @@ export const FeeManagement = () => {
     try {
       const response = await api.get('/api/fees');
       setFees(response.data);
-      
+
       const total = response.data.reduce((sum, f) => sum + f.amount, 0);
       const paid = response.data.reduce((sum, f) => sum + f.paidAmount, 0);
       setStats({ total, paid, pending: total - paid });
@@ -860,7 +857,7 @@ export const FeeManagement = () => {
                 </div>
                 <div>
                   <Label>Fee Type</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, feeType: value})} required>
+                  <Select onValueChange={(value) => setFormData({ ...formData, feeType: value })} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -875,19 +872,19 @@ export const FeeManagement = () => {
                 </div>
                 <div>
                   <Label>Amount</Label>
-                  <Input type="number" value={formData.amount} onChange={(e) => setFormData({...formData, amount: e.target.value})} required />
+                  <Input type="number" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Semester</Label>
-                  <Input type="number" value={formData.semester} onChange={(e) => setFormData({...formData, semester: e.target.value})} />
+                  <Input type="number" value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })} />
                 </div>
                 <div>
                   <Label>Academic Year</Label>
-                  <Input value={formData.academicYear} onChange={(e) => setFormData({...formData, academicYear: e.target.value})} placeholder="2024-2025" />
+                  <Input value={formData.academicYear} onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })} placeholder="2024-2025" />
                 </div>
                 <div>
                   <Label>Due Date</Label>
-                  <Input type="date" value={formData.dueDate} onChange={(e) => setFormData({...formData, dueDate: e.target.value})} />
+                  <Input type="date" value={formData.dueDate} onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })} />
                 </div>
               </div>
               <Button type="submit" className="bg-brand-blue">Create Fee Record</Button>
@@ -921,10 +918,9 @@ export const FeeManagement = () => {
                   <TableCell>₹{fee.paidAmount}</TableCell>
                   <TableCell>{fee.dueDate ? new Date(fee.dueDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                      fee.status === 'paid' ? 'bg-green-100 text-green-800' : 
-                      fee.status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${fee.status === 'paid' ? 'bg-green-100 text-green-800' :
+                        fee.status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {fee.status}
                     </span>
                   </TableCell>
@@ -1001,11 +997,11 @@ export const ExamManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Exam Name</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required placeholder="Mid-Term Exam" />
+                  <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required placeholder="Mid-Term Exam" />
                 </div>
                 <div>
                   <Label>Course</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, courseId: value})} required>
+                  <Select onValueChange={(value) => setFormData({ ...formData, courseId: value })} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select course" />
                     </SelectTrigger>
@@ -1018,11 +1014,11 @@ export const ExamManagement = () => {
                 </div>
                 <div>
                   <Label>Semester</Label>
-                  <Input type="number" value={formData.semester} onChange={(e) => setFormData({...formData, semester: e.target.value})} required />
+                  <Input type="number" value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Exam Type</Label>
-                  <Select onValueChange={(value) => setFormData({...formData, examType: value})} required>
+                  <Select onValueChange={(value) => setFormData({ ...formData, examType: value })} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -1036,15 +1032,15 @@ export const ExamManagement = () => {
                 </div>
                 <div>
                   <Label>Exam Date</Label>
-                  <Input type="date" value={formData.examDate} onChange={(e) => setFormData({...formData, examDate: e.target.value})} />
+                  <Input type="date" value={formData.examDate} onChange={(e) => setFormData({ ...formData, examDate: e.target.value })} />
                 </div>
                 <div>
                   <Label>Maximum Marks</Label>
-                  <Input type="number" value={formData.maxMarks} onChange={(e) => setFormData({...formData, maxMarks: e.target.value})} required />
+                  <Input type="number" value={formData.maxMarks} onChange={(e) => setFormData({ ...formData, maxMarks: e.target.value })} required />
                 </div>
                 <div>
                   <Label>Passing Marks</Label>
-                  <Input type="number" value={formData.passingMarks} onChange={(e) => setFormData({...formData, passingMarks: e.target.value})} required />
+                  <Input type="number" value={formData.passingMarks} onChange={(e) => setFormData({ ...formData, passingMarks: e.target.value })} required />
                 </div>
               </div>
               <Button type="submit" className="bg-brand-blue">Create Exam</Button>
@@ -1080,10 +1076,9 @@ export const ExamManagement = () => {
                   <TableCell>{exam.examDate ? new Date(exam.examDate).toLocaleDateString() : '-'}</TableCell>
                   <TableCell>{exam.maxMarks}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                      exam.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                      exam.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${exam.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        exam.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                      }`}>
                       {exam.status}
                     </span>
                   </TableCell>
