@@ -102,78 +102,9 @@ router.delete('/:id', auth, roleAuth('admin'), async (req, res) => {
   }
 });
 
-
-/** 
-
-// Department routes
-
-// Get all departments
-router.get('/departments/all', async (req, res) => {
-  try {
-    const departments = await Department.find({ isActive: true })
-      .sort({ name: 1 });
-    res.json(departments);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Create a department
-router.post('/departments', auth, roleAuth('admin'), async (req, res) => {
-  try {
-    const department = new Department(req.body);
-    await department.save();
-    res.status(201).json({
-      message: 'Department created successfully',
-      department
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update department by id
-router.put('/departments/:id', auth, roleAuth('admin'), async (req, res) => {
-  try {
-    const department = await Department.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-
-    if (!department) {
-      return res.status(404).json({ error: 'Department not found!' });
-    }
-
-    res.status(200).json({
-      message: 'Department updated successfully',
-      department
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Delete department by id
-router.delete('/departments/:id', auth, roleAuth('admin', async (req, res) => {
-  try {
-    const department = await Department.findByIdAndDelete(
-      req.params.id,
-      { new: true }
-    );
-
-    if (!department) {
-      return res.status(404).json({ error: 'Department not found!' });
-    }
-
-    res.status(204).json({ message: 'Department deleted successfully!' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}));
-*/
-
 // Subject routes
+
+// Create a subject
 router.post('/subjects', auth, roleAuth('admin'), async (req, res) => {
   try {
     const subject = new Subject(req.body);
@@ -187,6 +118,7 @@ router.post('/subjects', auth, roleAuth('admin'), async (req, res) => {
   }
 });
 
+// Get all subjects for a particular course
 router.get('/:courseId/subjects', async (req, res) => {
   try {
     const subjects = await Subject.find({ courseId: req.params.courseId })
@@ -194,6 +126,45 @@ router.get('/:courseId/subjects', async (req, res) => {
     res.json(subjects);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a subject
+router.put('/subjects/:id', auth, roleAuth('admin'), async (req, res) => {
+  try {
+    const subject = await Subject.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!subject) {
+      return res.status(404).json({ error: 'Subject not found!' });
+    }
+
+    res.status(200).json({
+      message: 'Subject added successfully!',
+      subject
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete a subject
+router.delete('/subjects/:id', auth, roleAuth('admin'), async (req, res) => {
+  try {
+    const subject = await Subject.findByIdAndDelete(req.params.id);
+
+    if (!subject) {
+      return res.status(404).json({
+        error: 'Subject not found'
+      });
+    }
+
+    res.status(200).json({ message: 'Subject deleted successfully!' });
+  } catch (error) {
+    res.status(500).json({ error: "error.message" });
   }
 });
 
