@@ -201,7 +201,7 @@ const DepartmentManagement = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/departments/');
+      const response = await api.get('/api/courses/departments/all');
       setDepartments(response.data);
     } catch (error) {
       toast.error('Failed to fetch departments');
@@ -211,7 +211,7 @@ const DepartmentManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/departments/', formData);
+      await api.post('/api/departments', formData);
       toast.success('Department created successfully');
       setShowForm(false);
       setFormData({ name: '', code: '', description: '' });
