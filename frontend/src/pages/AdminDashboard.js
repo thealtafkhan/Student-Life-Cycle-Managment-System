@@ -201,7 +201,7 @@ const DepartmentManagement = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/courses/departments/all');
+      const response = await api.get('/api/departments/');
       setDepartments(response.data);
     } catch (error) {
       toast.error('Failed to fetch departments');

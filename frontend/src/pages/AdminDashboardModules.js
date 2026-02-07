@@ -36,7 +36,7 @@ export const FacultyManagement = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/api/courses/departments/');
+      const response = await api.get('/api/departments/');
       setDepartments(response.data);
     } catch (error) {
       console.error(error);
