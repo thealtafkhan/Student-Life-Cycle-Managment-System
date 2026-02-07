@@ -211,7 +211,7 @@ const DepartmentManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/departments/', formData);
+      await api.post('/api/departments', formData);
       toast.success('Department created successfully');
       setShowForm(false);
       setFormData({ name: '', code: '', description: '' });
