@@ -93,7 +93,7 @@ const AdminHome = () => {
     try {
       const response = await api.get("/api/admin/dashboard-stats");
       setStats(response.data);
-       
+      // console.log("enroll", response.data);
     } catch (error) {
       toast.error("Failed to fetch statistics");
     }
@@ -103,12 +103,12 @@ const AdminHome = () => {
     try {
       const response = await api.get("/api/admin/course-stats");
       setCourseStats(response.data);
+      console.log("course", response);
     } catch (error) {
       console.error(error);
     }
   };
 
- 
   if (!stats)
     return (
       <div className="flex justify-center py-12">
@@ -146,7 +146,7 @@ const AdminHome = () => {
         />
         <StatsCard
           title="Active Enrollments"
-          value={stats.students.active}
+          value={stats?.applications?.selected}
           icon={<Users />}
           color="purple"
         />
@@ -227,7 +227,7 @@ const AdminHome = () => {
               <div className="flex justify-between text-sm">
                 <span>Occupied:</span>
                 <span className="font-bold text-green-600">
-                  {stats.hostels.occupancy}
+                  {stats.hostels.occupied}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -271,24 +271,33 @@ const AdminHome = () => {
                     {stat.courseName}
                   </TableCell>
                   <TableCell>{stat.courseCode}</TableCell>
-                  <TableCell>{stat.studentCount}</TableCell>
+                  <TableCell>{stat.filledSeats}</TableCell>
                   <TableCell>{stat.totalSeats}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-brand-blue h-2 rounded-full"
-                          style={{
-                            width: `${(stat.studentCount / stat.totalSeats) * 100}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <span className="text-xs">
-                        {Math.round(
-                          (stat.studentCount / stat.totalSeats) * 100,
-                        )}
-                        %
-                      </span>
+                      {(() => {
+                        const students = Number(stat.filledSeats) || 0;
+                        const seats = Number(stat.totalSeats) || 0;
+                        const percentage =
+                          seats > 0
+                            ? Math.min(
+                                Math.round((students / seats) * 100),
+                                100,
+                              )
+                            : 0;
+
+                        return (
+                          <>
+                            <div className="w-24 bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-brand-blue h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${percentage}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs">{percentage}%</span>
+                          </>
+                        );
+                      })()}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -1066,7 +1075,7 @@ const CourseManagement = () => {
                       variant="outline"
                       onClick={() => openEdit(course)}
                     >
-                      <Edit/>
+                      <Edit />
                     </Button>
 
                     <Button
@@ -1074,7 +1083,7 @@ const CourseManagement = () => {
                       variant="destructive"
                       onClick={() => deleteCourse(course._id)}
                     >
-                      <Trash2/>
+                      <Trash2 />
                     </Button>
                   </TableCell>
 
@@ -1417,7 +1426,9 @@ const Sidebar = ({ user, onLogout }) => (
   <div className="fixed left-0 top-0 h-full w-64 bg-slate-900 text-white p-6 overflow-y-auto pb-24">
     <div className="flex items-center space-x-2 mb-8">
       <GraduationCap className="h-8 w-8" />
-      <Link to="/" className="font-serif text-2xl font-bold">SLMS</Link>
+      <Link to="/" className="font-serif text-2xl font-bold">
+        SLMS
+      </Link>
     </div>
     <div className="mb-8">
       <p className="text-sm text-slate-400">Welcome,</p>

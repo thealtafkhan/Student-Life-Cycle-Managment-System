@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import api from "../utils/api";
 import { Edit, Trash2 } from "lucide-react";
+import { Label } from "recharts";
 
 export const FacultyManagement = () => {
   const [faculties, setFaculties] = useState([]);
@@ -764,7 +765,7 @@ export const EnrollmentManagement = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Enrollments ({enrollments.length})</CardTitle>
+          <CardTitle>All Enrollments ({enrollments?.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
