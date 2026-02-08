@@ -3,6 +3,7 @@ import { auth, roleAuth } from '../middleware/auth.js';
 import Course from '../models/Course.js';
 import Department from '../models/Department.js';
 import Subject from '../models/Subject.js';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
@@ -30,6 +31,8 @@ router.get('/:id', async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
       .populate('departmentId');
+
+    console
 
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });
@@ -121,8 +124,16 @@ router.post('/subjects', auth, roleAuth('admin'), async (req, res) => {
 // Get all subjects for a particular course
 router.get('/:courseId/subjects', async (req, res) => {
   try {
-    const subjects = await Subject.find({ courseId: req.params.courseId })
+    // Validate the ObjectId format first
+    if (!mongoose.Types.ObjectId.isValid(req.params.courseId)) {
+      return res.status(400).json({ error: 'Invalid course ID' });
+    }
+
+    const subjects = await Subject.find({
+      courseId: req.params.courseId  // Mongoose converts this automatically
+    })
       .sort({ semester: 1, name: 1 });
+
     res.json(subjects);
   } catch (error) {
     res.status(500).json({ error: error.message });
