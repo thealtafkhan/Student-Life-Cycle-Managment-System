@@ -321,10 +321,8 @@ const StudentProfile = () => {
     </div>
   );
 };
-
 const StudentSubjects = () => {
   const [subjects, setSubjects] = useState([]);
-  const [enrollment, setEnrollment] = useState(null);
 
   useEffect(() => {
     fetchSubjects();
@@ -332,15 +330,12 @@ const StudentSubjects = () => {
 
   const fetchSubjects = async () => {
     try {
-      const enrollmentRes = await api.get('/api/enrollments/my-enrollment');
-      setEnrollment(enrollmentRes.data.enrollment);
-      
-      if (enrollmentRes.data.enrollment?.courseId?._id) {
-        const subjectsRes = await api.get(`/api/courses/${enrollmentRes.data.enrollment.courseId._id}/subjects`);
-        setSubjects(subjectsRes.data);
-      }
+      const res = await api.get(
+        "/api/courses/69871185e5d184fbe5c1cbcc/subjects"
+      );
+      setSubjects(res.data);
     } catch (error) {
-      toast.error('Failed to fetch subjects');
+      toast.error("Failed to fetch subjects");
     }
   };
 
@@ -354,57 +349,58 @@ const StudentSubjects = () => {
 
   return (
     <div>
-      <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8">My Subjects</h1>
-      
-      {enrollment && (
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <p className="text-sm text-slate-600">Course: <span className="font-semibold text-brand-blue">{enrollment.courseId?.name}</span></p>
-            <p className="text-sm text-slate-600 mt-2">Current Semester: <span className="font-semibold text-brand-blue">{enrollment.currentSemester}</span></p>
-          </CardContent>
-        </Card>
-      )}
+      <h1 className="font-serif text-4xl font-bold text-brand-blue mb-8">
+        Course Subjects
+      </h1>
 
-      {Object.keys(subjectsBySemester).sort((a, b) => a - b).map(semester => (
-        <Card key={semester} className="mb-6">
-          <CardHeader>
-            <CardTitle>Semester {semester}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Subject Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Credits</TableHead>
-                  <TableHead>Type</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subjectsBySemester[semester].map((subject) => (
-                  <TableRow key={subject._id}>
-                    <TableCell className="font-medium">{subject.name}</TableCell>
-                    <TableCell>{subject.code}</TableCell>
-                    <TableCell>{subject.credits}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                        subject.isElective ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {subject.isElective ? 'Elective' : 'Core'}
-                      </span>
-                    </TableCell>
+      {Object.keys(subjectsBySemester)
+        .sort((a, b) => a - b)
+        .map((semester) => (
+          <Card key={semester} className="mb-6">
+            <CardHeader>
+              <CardTitle>Semester {semester}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Subject Name</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Credits</TableHead>
+                    <TableHead>Type</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      ))}
+                </TableHeader>
+                <TableBody>
+                  {subjectsBySemester[semester].map((subject) => (
+                    <TableRow key={subject._id}>
+                      <TableCell className="font-medium">
+                        {subject.name}
+                      </TableCell>
+                      <TableCell>{subject.code}</TableCell>
+                      <TableCell>{subject.credits}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            subject.isElective
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {subject.isElective ? "Elective" : "Core"}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        ))}
 
       {subjects.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-slate-600">No subjects assigned yet</p>
+            <p className="text-slate-600">No subjects found</p>
           </CardContent>
         </Card>
       )}
