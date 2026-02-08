@@ -218,7 +218,7 @@ export const FacultyManagement = () => {
               // Add Faculty clicked
               resetForm();
               setShowForm(true);
-              setIsEditing(false);  
+              setIsEditing(false);
             }
           }}
         >
@@ -301,6 +301,40 @@ export const FacultyManagement = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  placeholder="Designation"
+                  value={formData.designation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, designation: e.target.value })
+                  }
+                />
+
+                <Input
+                  placeholder="Qualification"
+                  value={formData.qualification}
+                  onChange={(e) =>
+                    setFormData({ ...formData, qualification: e.target.value })
+                  }
+                />
+
+                <Input
+                  placeholder="Specialization"
+                  value={formData.specialization}
+                  onChange={(e) =>
+                    setFormData({ ...formData, specialization: e.target.value })
+                  }
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Experience (Years)"
+                  value={formData.experience}
+                  onChange={(e) =>
+                    setFormData({ ...formData, experience: e.target.value })
+                  }
+                />
               </div>
 
               {!formData.departmentId && (

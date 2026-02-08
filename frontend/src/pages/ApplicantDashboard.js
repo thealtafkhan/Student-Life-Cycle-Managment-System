@@ -177,7 +177,7 @@ const Sidebar = ({ user, onLogout }) => {
     <div className="fixed left-0 top-0 h-full w-64 bg-slate-900 text-white p-6 overflow-y-auto pb-24">
       <div className="flex items-center space-x-2 mb-8">
         <GraduationCap className="h-8 w-8" />
-        <span className="font-serif text-2xl font-bold">SLMS</span>
+        <Link to="/" className="font-serif text-2xl font-bold">SLMS</Link>
       </div>
 
       <div className="mb-8">

@@ -69,7 +69,7 @@ const RegisterPage = ({ setUser }) => {
 
         <Card className="shadow-xl">
           <CardHeader className="text-center">
-            <CardTitle className="font-serif text-2xl">Create Account</CardTitle>
+            <CardTitle className="font-serif text-2xl">Create Applicant Account</CardTitle>
             <CardDescription>Register to start your application</CardDescription>
           </CardHeader>
           <CardContent>
