@@ -1243,6 +1243,7 @@ export const FeeManagement = () => {
                 <div>
                   <Label>Amount</Label>
                   <Input
+                  placeholder="Amount"
                     type="number"
                     value={formData.amount}
                     onChange={(e) =>
@@ -1254,6 +1255,7 @@ export const FeeManagement = () => {
                 <div>
                   <Label>Semester</Label>
                   <Input
+                  placeholder="Semester"
                     type="number"
                     value={formData.semester}
                     onChange={(e) =>
@@ -1264,6 +1266,7 @@ export const FeeManagement = () => {
                 <div>
                   <Label>Academic Year</Label>
                   <Input
+                  
                     value={formData.academicYear}
                     onChange={(e) =>
                       setFormData({ ...formData, academicYear: e.target.value })
@@ -1275,6 +1278,7 @@ export const FeeManagement = () => {
                   <Label>Due Date</Label>
                   <Input
                     type="date"
+                    placeholder="Due Fee"
                     value={formData.dueDate}
                     onChange={(e) =>
                       setFormData({ ...formData, dueDate: e.target.value })
