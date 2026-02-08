@@ -1458,6 +1458,7 @@ export const ExamManagement = () => {
                 <div>
                   <Label>Semester</Label>
                   <Input
+                  placeholder="Semester"
                     type="number"
                     value={formData.semester}
                     onChange={(e) =>
@@ -1488,6 +1489,7 @@ export const ExamManagement = () => {
                 <div>
                   <Label>Exam Date</Label>
                   <Input
+                  placeholder="Exam Date"
                     type="date"
                     value={formData.examDate}
                     onChange={(e) =>
@@ -1499,6 +1501,7 @@ export const ExamManagement = () => {
                   <Label>Maximum Marks</Label>
                   <Input
                     type="number"
+                    placeholder="Maximum Marks"
                     value={formData.maxMarks}
                     onChange={(e) =>
                       setFormData({ ...formData, maxMarks: e.target.value })
@@ -1510,6 +1513,7 @@ export const ExamManagement = () => {
                   <Label>Passing Marks</Label>
                   <Input
                     type="number"
+                    placeholder="Passing Marks"
                     value={formData.passingMarks}
                     onChange={(e) =>
                       setFormData({ ...formData, passingMarks: e.target.value })
